@@ -3,9 +3,7 @@ package com.mypcr.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import com.mypcr.constant.UIConstant;
 import com.mypcr.handler.Handler;
@@ -16,6 +14,7 @@ public class ButtonUI implements ActionListener, Handler
 	public static final int BUTTON_START	=	0x00;
 	public static final int BUTTON_STOP		=	0x01;
 	public static final int BUTTON_PROTOCOL	=	0x02;
+	public static final int BUTTON_AUTO		= 0x10;
 	
 	private static JFrame m_Parent = null;
 	public JPanel m_Panel = null;
@@ -23,6 +22,10 @@ public class ButtonUI implements ActionListener, Handler
 	private JButton m_Button_Stop = null;
 	private JButton m_Button_ReadProtocol = null;
 	//private JButton m_Button_Exit = null;
+	private JButton m_Button_Auto = null;
+	
+	// Park, J. U. Test Ver
+	private JCheckBox cb = null;
 	
 	public static final int MESSAGE_PROTOCOL_SELECTED = 0x01;
 	
@@ -38,23 +41,30 @@ public class ButtonUI implements ActionListener, Handler
 		m_Button_Stop = new JButton(UIConstant.BUTTON_STOP_TEXT);
 		m_Button_ReadProtocol = new JButton(UIConstant.BUTTON_READPROTOCOL_TEXT);
 	//	m_Button_Exit = new JButton(UIConstant.BUTTON_EXIT_TEXT);
+		m_Button_Auto = new JButton("Auto");
+		cb = new JCheckBox("Auto");
+		cb.setVisible(false);
 		
 		// 버튼 이벤트 리스너 등록
 		m_Button_Start.addActionListener(this);
 		m_Button_Stop.addActionListener(this);
 		m_Button_ReadProtocol.addActionListener(this);
 	//	m_Button_Exit.addActionListener(this);
+		m_Button_Auto.addActionListener(this);
 		
 		// 판넬에 버튼을 넣어준다. 
 		m_Panel.add(m_Button_Start);
 		m_Panel.add(m_Button_Stop);
 		m_Panel.add(m_Button_ReadProtocol);
 	//	m_Panel.add(m_Button_Exit);
+		m_Panel.add(m_Button_Auto);
+		m_Panel.add(cb);
 		
 		// 버튼 비활성화 초기화 처리
 		setEnable(BUTTON_START, false);
 		setEnable(BUTTON_STOP, false);
 		setEnable(BUTTON_PROTOCOL, false);
+		setEnable(false);
 	}
 	
 	public static ButtonUI getInstance( JFrame parent )
@@ -83,6 +93,9 @@ public class ButtonUI implements ActionListener, Handler
 			case BUTTON_PROTOCOL:
 				m_Button_ReadProtocol.setEnabled(bool);
 				break;
+				
+			case BUTTON_AUTO:
+				m_Button_Auto.setEnabled(bool);
 		}
 	}
 	
@@ -96,9 +109,22 @@ public class ButtonUI implements ActionListener, Handler
 				return m_Button_Stop.isEnabled();
 			case BUTTON_PROTOCOL:
 				return m_Button_ReadProtocol.isEnabled();
+			case BUTTON_AUTO:
+				return m_Button_Auto.isEnabled();
 		}
-		
 		return false;
+	}
+	
+	public void setEnable(boolean bool){
+		cb.setEnabled(bool);
+	}
+	
+	public void isEnable(){
+		cb.isEnabled();
+	}
+	
+	public boolean isSelected(){
+		return cb.isSelected();
 	}
 
 	@Override
@@ -118,14 +144,8 @@ public class ButtonUI implements ActionListener, Handler
 		{
 			ProtocolManager ui = new ProtocolManager(this);
 			ui.showDialog();
-			
-			/* 이전 버전 복구용
-			Action[] actions = null;
-			actions = Functions.ReadProtocolbyDialog( m_Parent );
-
-			// Parent 에 메시지를 날리고, 메시지의 유효성 여부는 Parent에 맡긴다.
-			((Handler)m_Parent).OnHandleMessage(Handler.MESSAGE_READ_PROTOCOL, actions);
-			*/
+		} else if(event == m_Button_Auto){
+			((Handler)m_Parent).OnHandleMessage(Handler.MESSAGE_AUTO, null);
 		}
 	}
 

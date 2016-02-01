@@ -9,5 +9,7 @@ public interface Handler
 	static final int MESSAGE_TASK_WRITE_END		= 0x03;
 	static final int MESSAGE_TASK_WRITE_TIMEOUT = 0x04;
 	
+	static final int MESSAGE_AUTO				= 0x10;
+	
 	public void OnHandleMessage(int MessageType, Object data);
 }
